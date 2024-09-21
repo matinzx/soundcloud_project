@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundCloud Downloader</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <h1>SoundCloud Downloader</h1>
+    <form method="post" action="{% url 'download' %}">
+        {% csrf_token %}
+        <label for="track_url">Enter the SoundCloud track URL:</label>
+        <input type="url" id="track_url" name="track_url" required>
+        <button type="submit">Download</button>
+    </form>
+
+    {% if message %}
+    <p>{{ message }}</p>
+    {% endif %}
+</body>
+</html>
