@@ -3,13 +3,19 @@ from django.http import HttpResponse, FileResponse
 import youtube_dl
 import os
 import eyed3
+from PIL import Image
+
+# تابع برای تغییر سایز تصویر به 300x300
+def resize_image(image_path):
+    with Image.open(image_path) as img:
+        img = img.resize((300, 300))
+        img.save(image_path)
 
 # تابع برای اضافه کردن تصویر کاور به فایل MP3
 def add_image(art_image_path, song_filename, mime_type='image/jpeg'):
     audiofile = eyed3.load(song_filename)
     if audiofile.tag is None:
         audiofile.initTag()
-    # افزودن تصویر کاور به فایل صوتی
     with open(art_image_path, 'rb') as image_file:
         audiofile.tag.images.set(3, image_file.read(), mime_type)
     audiofile.tag.save()
@@ -49,6 +55,9 @@ def index(request):
                     return HttpResponse("Error: Audio file not found.", status=500)
                 if not os.path.exists(cover_path):
                     return HttpResponse("Error: Cover file not found.", status=500)
+
+                # تغییر سایز تصویر کاور به 300x300
+                resize_image(cover_path)
 
                 # افزودن کاور به فایل صوتی
                 add_image(cover_path, response_filename)
